@@ -8,7 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="mvn-proj" />
-        <module name="mvnproj" />
       </profile>
     </annotationProcessing>
   </component>
