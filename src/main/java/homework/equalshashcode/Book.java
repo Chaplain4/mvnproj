@@ -8,12 +8,18 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
 public class Book extends Publication {
     private int numPages;
 
     public Book(long id, int version, String title, Author[] authors, int numPages) {
         super(id, version, title, authors);
         this.numPages = numPages;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "numPages=" + numPages +
+                "} " + super.toString();
     }
 }

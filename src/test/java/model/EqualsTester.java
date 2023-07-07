@@ -1,7 +1,6 @@
 package model;
 
-import homework.equalshashcode.Author;
-import homework.equalshashcode.Publication;
+import homework.equalshashcode.*;
 
 public class EqualsTester {
     public static String generateName() {
@@ -36,7 +35,25 @@ public class EqualsTester {
     public static Publication[] generatePublicationsArray(int length, Author[] authors, int maxAuthorsPerPublication) {
         Publication[] publications = new Publication[length];
         for (int i = 0; i < length; i++) {
-            publications[i] = new Publication(i + 1, 1, generatePublicationTitle(), new Author[(int) ((Math.random()) * maxAuthorsPerPublication + 1)]);
+
+                switch (i % 3) {
+                    case 0: {
+                        publications[i] = new Book(i + 1, 1, generatePublicationTitle(), new Author[(int) ((Math.random()) * maxAuthorsPerPublication + 1)],(int) ((Math.random()) * 1000));
+                        break;
+                    }
+                    case 1: {
+                        publications[i] = new BlogPost(i + 1, 1, generatePublicationTitle(), new Author[(int) ((Math.random()) * maxAuthorsPerPublication + 1)],"www.programmingblog.net");
+                        break;
+                    }
+
+                    case 2: {
+                        publications[i] = new MagazineArticle(i + 1, 1, generatePublicationTitle(), new Author[(int) ((Math.random()) * maxAuthorsPerPublication + 1)],"Programming Magazine");
+                        break;
+                    }
+
+                }
+
+//            publications[i] = new Publication(i + 1, 1, generatePublicationTitle(), new Author[(int) ((Math.random()) * maxAuthorsPerPublication + 1)]);
         }
         for (int i = 0; i < length; i++) {
             Author[] authors1 = new Author[publications[i].getAuthors().length];
