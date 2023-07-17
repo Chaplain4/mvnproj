@@ -13,6 +13,13 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Person implements Cloneable {
+    private int id;
+    private String name;
+    private String lastname;
+    private int age;
+    private Cat cat;
+    private Car car;
+
     public Person(int id, String name, String lastname, int age) {
         this.id = id;
         this.name = name;
@@ -20,11 +27,13 @@ public class Person implements Cloneable {
         this.age = age;
     }
 
-    private int id;
-    private String name;
-    private String lastname;
-    private int age;
-    private Cat cat;
+    public Person(int id, String name, String lastname, int age, Cat cat) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.age = age;
+        this.cat = cat;
+    }
 
     @Override
     public boolean equals(Object o) {
