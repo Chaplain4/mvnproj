@@ -78,9 +78,9 @@ public class ArraysUtil {
 
         //size
         int arr100Size = arr100.length;
-        System.out.println("Number of elements is " + arr100Size);
+        System.out.println("Numbers of elements is " + arr100Size);
         int arr110Size = arr110.length;
-        System.out.println("Number of elements is " + arr110Size);
+        System.out.println("Numbers of elements is " + arr110Size);
 
         //GET ELEMENT FROM ARRAY
         int val = arr100[2];

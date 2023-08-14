@@ -18,7 +18,7 @@ public class StorageTest {
     @Test(expected = NumberFormatException.class)
     public void testStorage2() {
         Storage<Number> numbers = new Storage<>();
-        numbers.add(3.44); // boxing : double -> 3.44 -> new Double(3.44) -> (Number)
+        numbers.add(3.44); // boxing : double -> 3.44 -> new Double(3.44) -> (Numbers)
         numbers.add(new Long(213));
         numbers.add(new Double("213,789"));
     }
@@ -26,7 +26,7 @@ public class StorageTest {
     @Test
     public void testStorage3() {
         Storage<String> strings = new Storage<>();
-        strings.add("123"); // boxing : double -> 3.44 -> new Double(3.44) -> (Number)
+        strings.add("123"); // boxing : double -> 3.44 -> new Double(3.44) -> (Numbers)
         strings.add("test");
         strings.add(new String(" "));
         String s = strings.get(strings.getSize() + 1);
