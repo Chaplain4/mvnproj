@@ -1,7 +1,10 @@
 package util;
 
-import java.io.File;
+import io.Test;
+
+import java.io.*;
 import java.util.Date;
+import java.util.Locale;
 
 public class IOUtils {
     public static void printStat (String path) {
@@ -22,6 +25,40 @@ public class IOUtils {
             }
         } else {
             System.out.println(String.format("FILE ---> <%s><Size:/d>", rootFile.getName(), rootFile.length()));
+        }
+    }
+
+    public static void write(String data, String path) {
+        try (Writer writer = new BufferedWriter(new FileWriter(path))) {
+        writer.write(data);
+        File file = new File(path);
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void write(String data, String path, boolean append) {
+        try (Writer writer = new BufferedWriter(new FileWriter(path, append))) {
+            writer.write(data);
+            File file = new File(path);
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void stitch(String newFilePath, String... paths) {
+        StringBuilder sb = new StringBuilder();
+        for (String path : paths) {
+            sb.append(io.Test.readFile(path));
+        }
+        write(sb.toString(), newFilePath, true);
+    }
+
+    public static void findKeyword(String filePath, String searchword) {
+        if (io.Test.readFile(filePath).toLowerCase().contains(searchword.toLowerCase())) {
+            System.out.println("Searchword found!");
         }
     }
 }

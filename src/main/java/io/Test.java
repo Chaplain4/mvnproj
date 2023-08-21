@@ -3,10 +3,12 @@ package io;
 import util.IOUtils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Test {
-    public static void main(String[] args) {
+
+    public void practice() {
         File file = new File("D:\\io_tests\\new_file.txt");
         try {
             boolean isCreated = file.createNewFile();
@@ -25,7 +27,7 @@ public class Test {
             System.out.println("**********");
             IOUtils.printStat(file3.getPath());
             System.out.println("**********");
-            InputStream is = new FileInputStream(new File("D:/io_tests/war_and_peace.ru.txt"));
+            InputStream is = new FileInputStream("D:/io_tests/war_and_peace.ru.txt");
             Date startDate2 = new Date();
             int code = is.read();
             System.out.println("code = " + code);
@@ -55,12 +57,93 @@ public class Test {
                 System.out.print((char) charcode2);
             }
             Date endDate = new Date();
-            System.out.println(endDate.getTime()-startDate.getTime());
-            System.out.println(endDate1.getTime()-startDate1.getTime());
-            System.out.println(endDate2.getTime()-startDate2.getTime());
+            System.out.println(endDate.getTime() - startDate.getTime());
+            System.out.println(endDate1.getTime() - startDate1.getTime());
+            System.out.println(endDate2.getTime() - startDate2.getTime());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public static ArrayList<String> task1(File file) {
+        ArrayList<String> arraylist = new ArrayList<String>(1);
+        Reader reader3 = null;
+        try {
+            reader3 = new BufferedReader(new FileReader(file.getPath()));
+            int charcode3;
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((charcode3 = reader3.read()) != -1 && stringBuilder.length() != Integer.MAX_VALUE) {
+                if (stringBuilder.length() < Integer.MAX_VALUE - 1) {
+                    stringBuilder.append((char) charcode3);
+                } else {
+                    arraylist.add(stringBuilder.toString());
+                    stringBuilder.delete(0, stringBuilder.length() - 1);
+                }
+            }
+            if (stringBuilder.length() > 0) {
+                arraylist.add(stringBuilder.toString());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return arraylist;
+    }
+
+    public static String readFile(String path) {
+        StringBuilder sb = new StringBuilder(214748364);
+        try (Reader reader = new BufferedReader(new FileReader(path), 214748364)) {  // using TRY - with - resources. See AutoCloseable.
+            int characterCode;
+            while ((characterCode = reader.read()) != -1) {
+                sb.append((char) characterCode);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Check you file path");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        try (Resource res = new Resource()) {
+            //working with resource
+            res.addLine("hello ");
+            res.addLine("world");
+            res.printData();
+            ArrayList<String> arrayList = task1(new File("D:/io_tests/war_and_peace.ru.txt"));
+            File file2 = new File("D:/io_tests/war_and_peace2.ru.txt");
+            for (int i = 0; i < arrayList.size(); i++) {
+                System.out.println(arrayList.get(i));
+                System.out.println(arrayList.get(i).length());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+}
+
+class Resource implements Closeable {
+
+    private String data = new String();
+
+    @Override
+    public void close() throws IOException {
+        if (data.length() > 0) {
+            data = new String();
+            System.out.println("Resource data clear");
+        }
+    }
+
+    public void addLine(String line) {
+        data += line;
+    }
+
+    public void printData() {
+        System.out.println(data);
+    }
 }
