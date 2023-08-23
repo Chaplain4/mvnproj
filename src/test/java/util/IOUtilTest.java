@@ -41,4 +41,12 @@ public class IOUtilTest {
         IOUtils.stitch(newFilePath,"D:\\io_tests/new_file_1692640788018.txt","D:\\io_tests/new_file_1692640788018.txt","D:\\io_tests/new_file.txt");
         Assert.assertEquals("Wrong Content", "Hello from Java!Hello from Java!Hello World!", io.Test.readFile(newFilePath));
     }
+
+    @Test
+    public void readByLineTest(){
+        String newFilePath = "D:/io_tests/war_and_peace.ru.txt";
+        String data = IOUtils.readFileByLine(newFilePath);
+        System.out.println(IOUtils.readFileByLine(newFilePath));
+        Assert.assertNotNull(data);
+    }
 }
