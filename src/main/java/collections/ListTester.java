@@ -32,10 +32,3 @@ public class ListTester {
     }
 }
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-class Cat{
-    private int id;
-    private String name;
-}
