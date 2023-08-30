@@ -98,8 +98,6 @@ public class ListTester {
                 System.out.println("Cat deleted");
             }
         }
-
-        
     }
 }
 
