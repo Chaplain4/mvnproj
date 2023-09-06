@@ -35,6 +35,9 @@ public class Course {
     }
 
     public void setTeacher(Lecturer teacher) {
+        if (this.teacher != null) {
+            this.getTeacher().getTaughtCourses().remove(this.subject);
+        }
         teacher.getTaughtCourses().add(this.subject);
         this.teacher = teacher;
     }
