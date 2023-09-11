@@ -8,8 +8,14 @@ public class MapTester {
     public static void main(String[] args) {
         Map<Integer, String> map1 = new HashMap<>();
         map1.put(123, "John");
-        map1.put(123, "Mike");
+        map1.put(125, "Mike");
         System.out.println(map1.size());
+
+        map1.forEach((k,v) -> {
+            System.out.println("KEY: " + k + ", VALUE: " + v);
+            System.out.println("!");
+        });
+
         Map<Passport, Human> map2 = new HashMap<>();
         map2.put(new Passport("MP124312", new Date()), new Human("Bob", "JJ", 33));
         map2.put(new Passport("MP124542", new Date()), new Human("Ben", "DD", 39));
