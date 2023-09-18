@@ -63,15 +63,12 @@ public class StackAndQueue {
                 break;
             }
         }
-
         if (playerTwo.isEmpty()) {
             System.out.println("Player 1 wins!");
         }
-
         if (playerOne.isEmpty()) {
             System.out.println("Player 2 wins!");
         }
-
         System.out.println(exchangeCounter);
     }
 
