@@ -200,6 +200,152 @@ public class StackAndQueue {
         } else System.out.println(values.getLast());
     }
 
+    public static void taskH(int docks, int cargoHolds, int maxBarrels) {
+//На барже располагается K грузовых отсеков. В каждый отсек можно поместить некоторое количество бочек с одним из 10 000
+// видов топлива. Причём извлечь бочку из отсека можно лишь в случае, если все бочки, помещённые в этот отсек после неё,
+// уже были извлечены. Таким образом, в каждый момент времени в каждом непустом отсеке имеется ровно одна бочка, которую
+// можно извлечь не трогая остальных. Будем называть такие бочки крайними.
+//Изначально баржа пуста. Затем она последовательно проплывает через N доков, причём в каждом доке на баржу либо
+// погружается бочка с некоторым видом топлива в некоторый отсек, либо выгружается крайняя бочка из некоторого отсека.
+// Однако, если указанный отсек пуст, либо если выгруженная бочка содержит не тот вид топлива, который ожидалось,
+// следует зафиксировать ошибку. Если на баржу оказывается погружено более P бочек или если после прохождения всех доков
+// она не стала пуста, следует также зафиксировать ошибку. От вас требуется либо указать максимальное количество бочек,
+// которые одновременно пребывали на барже либо зафиксировать ошибку.
+        int barrelCounter = 0;
+        int maxBarrelCounter = 0;
+        boolean isOK = true;
+        Map<Integer, Stack<Integer>> cargoShip = new HashMap<Integer, Stack<Integer>>();
+        for (int i = 0; i < cargoHolds; i++) {
+            cargoShip.put(i + 1, new Stack<>());
+        }
+        Scanner sc = new Scanner(System.in);
+        for (int i = 0; i < docks; i++) {
+            String nextOp = sc.nextLine();
+            String[] opDetail = nextOp.substring(2).split(" ");
+            Stack<Integer> newCargohold = cargoShip.get(Integer.valueOf(opDetail[0]));
+//Если в нём происходит погрузка, то строка имеет вид «+ A B», где A — номер отсека, в который помещается бочка, а
+// B — номер вида топлива в ней.
+            if (nextOp.startsWith("+")) {
+//Если на баржу оказывается погружено более P бочек или если после прохождения всех доков
+//она не стала пуста, следует также зафиксировать ошибку.
+                if (maxBarrels == barrelCounter) {
+                    System.out.println("Error");
+                    isOK = false;
+                    break;
+                }
+                newCargohold.push(Integer.valueOf(opDetail[1]));
+                cargoShip.put(Integer.valueOf(opDetail[0]), newCargohold);
+                barrelCounter++;
+                if (barrelCounter > maxBarrelCounter) {
+                    maxBarrelCounter = barrelCounter;
+                }
+            } else {
+//если указанный отсек пуст, либо если выгруженная бочка содержит не тот вид топлива, который ожидалось,
+// следует зафиксировать ошибку.
+                if (newCargohold.isEmpty() || newCargohold.peek() != Integer.valueOf(opDetail[1])) {
+                    System.out.println("Error");
+                    isOK = false;
+                    break;
+                } else {
+                    newCargohold.pop();
+                    cargoShip.put(Integer.valueOf(opDetail[0]), newCargohold);
+                    barrelCounter--;
+                }
+            }
+        }
+        if (barrelCounter != 0) {
+            System.out.println("Error");
+            isOK = false;
+        }
+        if (isOK) {
+            System.out.println(maxBarrelCounter);
+        }
+    }
+
+    public static void taskI(String balloons) {
+//В одной компьютерной игре игрок выставляет в линию шарики разных цветов. Их может быть очень много...
+//Когда образуется непрерывная цепочка из трех и более шариков одного цвета, она удаляется из линии.
+//Все шарики при этом сдвигаются друг к другу, и ситуация может повториться.
+//Напишите программу, которая по данной ситуации определяет, сколько шариков будет сейчас уничтожено.
+//Естественно, непрерывных цепочек из трех и более одноцветных шаров в начальный момент может быть не более одной.
+        String[] arr = balloons.split(" ");
+        Stack<Integer> line = new Stack<>();
+        Stack<Integer> popLine = new Stack<>();
+        int popCounter = 0;
+        for (String s : arr) {
+            line.push(Integer.valueOf(s));
+        }
+        while (line.size() > 2) {
+            popLine.push(line.pop());
+            if (line.peek() == popLine.peek()) {
+                popLine.push(line.pop());
+                if (line.peek() == popLine.peek()) {
+                    popCounter = 3;
+                    popLine.push(line.pop());
+                    while (line.peek() == popLine.peek()) {
+                        popCounter++;
+                        popLine.push(line.pop());
+                    }
+                }
+            }
+        }
+        System.out.println(popCounter);
+    }
+
+    public static void taskJ(Map<Integer, Stack<Integer>> depot) {
+//На складе хранятся контейнеры с товарами N различных видов. Все контейнеры составлены в N стопок.
+//В каждой стопке могут находиться контейнеры с товарами любых видов (стопка может быть изначально пустой).
+//Автопогрузчик может взять верхний контейнер из любой стопки и поставить его сверху в любую стопку.
+//Необходимо расставить все контейнеры с товаром первого вида в первую стопку, второго вида — во вторую стопку и т.д.
+//Программа должна вывести последовательность действий автопогрузчика или сообщение о том, что задача решения не имеет.
+        if (depot.size() < 2) {
+            System.out.println("No actions needed");
+        } else if (depot.size() == 2) {
+            while (!depot.get(1).isEmpty()) {
+                depot.get(0).push(depot.get(1).pop());
+                System.out.println("1 0");
+            }
+            while (depot.get(0).peek() != 0) {
+                depot.get(1).push(depot.get(0).pop());
+                System.out.println("0 1");
+            }
+            if (depot.get(0).contains(1)) {
+                System.out.println("Unable");
+            }
+        } else {
+            for (int i = 1; i < depot.size(); i++) {
+                while (!depot.get(i).isEmpty()) {
+                    System.out.println(i + " 0");
+                    depot.get(0).push(depot.get(i).pop());
+                }
+            }
+            while (!depot.get(0).isEmpty()) {
+                if (depot.get(0).peek() == 0) {
+                    depot.get(1).push(depot.get(0).pop());
+                    System.out.println("0 1");
+                } else {
+                    Integer val = depot.get(0).peek();
+                    depot.get(val).push(depot.get(0).pop());
+                    System.out.println("0 " + val);
+                }
+            }
+            while (!depot.get(1).isEmpty()) {
+                if (depot.get(1).peek() == 1) {
+                    depot.get(2).push(depot.get(1).pop());
+                    System.out.println("1 2");
+                } else {
+                    depot.get(0).push(depot.get(1).pop());
+                    System.out.println("1 0");
+                }
+            }
+            while (depot.get(2).peek() != 2) {
+                depot.get(1).push(depot.get(2).pop());
+                System.out.println("2 1");
+            }
+
+        }
+    }
+
     public static void main(String[] args) {
         taskA();
         taskD(new ArrayDeque<>(Arrays.asList(2, 3, 1)));
@@ -212,6 +358,25 @@ public class StackAndQueue {
                 "9 Sergeev\n" +
                 "10 Yakovlev");
         taskG("8 9 + 1 7 - *");
+        //  taskH(10, 5, 4);
+        taskI("1 0 3 2 4 5 3 1 8 2 6 5 5 5 5 5 5 5 5 7 1 3 0 3 5 4");
+        Map<Integer, Stack<Integer>> depot = new HashMap<>();
+        Stack<Integer> stack0 = new Stack<>();
+        stack0.push(0);
+        stack0.push(0);
+        stack0.push(1);
+        Stack<Integer> stack1 = new Stack<>();
+        stack1.push(1);
+        stack1.push(2);
+        stack1.push(1);
+        Stack<Integer> stack2 = new Stack<>();
+        stack2.push(0);
+        stack2.push(1);
+        stack2.push(2);
+        depot.put(0, stack0);
+        depot.put(1, stack1);
+        depot.put(2, stack2);
+        taskJ(depot);
     }
 }
 
