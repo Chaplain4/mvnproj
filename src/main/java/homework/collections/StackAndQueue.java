@@ -173,24 +173,24 @@ public class StackAndQueue {
                 break;
             } else if (operands.peekFirst().equals("+")) {
                 operands.pollFirst();
-                String newNum = String.valueOf(Integer.valueOf(values.pollFirst()) + Integer.valueOf(values.pollFirst()));
+                String newNum = String.valueOf(Integer.parseInt(Objects.requireNonNull(values.pollFirst())) + Integer.parseInt(Objects.requireNonNull(values.pollFirst())));
                 values.addFirst(newNum);
             } else if (operands.peekFirst().equals("-")) {
                 operands.pollFirst();
-                Integer a = Integer.valueOf(values.pollFirst());
-                Integer b = Integer.valueOf(values.pollFirst());
+                Integer a = Integer.valueOf(Objects.requireNonNull(values.pollFirst()));
+                Integer b = Integer.valueOf(Objects.requireNonNull(values.pollFirst()));
                 String newNum = String.valueOf(b - a);
                 values.addFirst(newNum);
             } else if (operands.peekFirst().equals("*")) {
                 operands.pollFirst();
-                Integer a = Integer.valueOf(values.pollFirst());
-                Integer b = Integer.valueOf(values.pollFirst());
+                Integer a = Integer.valueOf(Objects.requireNonNull(values.pollFirst()));
+                Integer b = Integer.valueOf(Objects.requireNonNull(values.pollFirst()));
                 String newNum = String.valueOf(b * a);
                 values.addFirst(newNum);
             } else if (operands.peekFirst().equals("/")) {
                 operands.pollFirst();
-                Integer a = Integer.valueOf(values.pollFirst());
-                Integer b = Integer.valueOf(values.pollFirst());
+                Integer a = Integer.valueOf(Objects.requireNonNull(values.pollFirst()));
+                Integer b = Integer.valueOf(Objects.requireNonNull(values.pollFirst()));
                 String newNum = String.valueOf(b / a);
                 values.addFirst(newNum);
             }
@@ -242,7 +242,7 @@ public class StackAndQueue {
             } else {
 //если указанный отсек пуст, либо если выгруженная бочка содержит не тот вид топлива, который ожидалось,
 // следует зафиксировать ошибку.
-                if (newCargohold.isEmpty() || newCargohold.peek() != Integer.valueOf(opDetail[1])) {
+                if (newCargohold.isEmpty() || !newCargohold.peek().equals(Integer.valueOf(opDetail[1]))) {
                     System.out.println("Error");
                     isOK = false;
                     break;
@@ -277,12 +277,12 @@ public class StackAndQueue {
         }
         while (line.size() > 2) {
             popLine.push(line.pop());
-            if (line.peek() == popLine.peek()) {
+            if (line.peek().equals(popLine.peek())) {
                 popLine.push(line.pop());
-                if (line.peek() == popLine.peek()) {
+                if (line.peek().equals(popLine.peek())) {
                     popCounter = 3;
                     popLine.push(line.pop());
-                    while (line.peek() == popLine.peek()) {
+                    while (line.peek().equals(popLine.peek())) {
                         popCounter++;
                         popLine.push(line.pop());
                     }
