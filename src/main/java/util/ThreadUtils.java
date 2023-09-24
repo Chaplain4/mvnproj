@@ -35,4 +35,8 @@ public class ThreadUtils {
     public static void runInNewThread(Runnable target) {
         new Thread(target).start();
     }
+
+    public static void runInNewThread(Runnable target, String name) {
+        new Thread(target, name).start();
+    }
 }
