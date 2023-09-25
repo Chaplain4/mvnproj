@@ -283,10 +283,12 @@ public class Threads {
         //- добавьте ещё одного повара
         //- клиент может заказать до 3ёх блюд
         Restaurant restaurant = new Restaurant();
-        Client[] clients = new Client[clientNum];
-        for (Client client : clients) {
-            client = new Client(restaurant);
+        for (int i = 0; i < clientNum; i++) {
+            Client client = new Client(restaurant);
         }
+        Waitress waitress = new Waitress(restaurant);
+        Cook cook1 = new Cook(restaurant);
+        Cook cook2 = new Cook(restaurant);
     }
 
     public static void main(String[] args) {
@@ -475,34 +477,40 @@ class Restaurant {
     //- определённое блюдо готовится определённому клиенту
     //- добавьте ещё одного повара
     //- клиент может заказать до 3ёх блюд
-    private ArrayList<String> clients;
-    private HashMap<String, ArrayList<String>> orders;
-    private HashMap<String, Boolean> ordersPlaced;
-    private HashMap<String, Boolean> ordersReady;
-    private HashMap<String, Boolean> ordersDelivered;
+    private ArrayList<String> clients = new ArrayList<>();
+    private HashMap<String, ArrayList<String>> orders = new HashMap<>();
+    private HashMap<String, Boolean> ordersPlaced = new HashMap<>();
+    private HashMap<String, Boolean> ordersReady = new HashMap<>();
+    private HashMap<String, Boolean> ordersDelivered = new HashMap<>();
     private boolean allOrdersPlaced = false;
     private boolean allOrdersReady = false;
     private boolean allOrdersDelivered = false;
 
-    public synchronized boolean checkPlaced() {
-        if (!ordersPlaced.containsValue(false)) {
-            setAllOrdersPlaced(true);
-            return true;
-        } else return false;
+    public synchronized String checkNotPlaced() {
+        for (String s : clients) {
+            if (!ordersPlaced.get(s)) {
+                return s;
+            }
+        }
+        return null;
     }
 
-    public synchronized boolean checkReady() {
-        if (!ordersReady.containsValue(false)) {
-            setAllOrdersReady(true);
-            return true;
-        } else return false;
+    public synchronized String checkNotReady() {
+        for (String s : clients) {
+            if (!ordersReady.get(s) && ordersPlaced.get(s)) {
+                return s;
+            }
+        }
+        return null;
     }
 
-    public synchronized boolean checkDelivered() {
-        if (!ordersDelivered.containsValue(false)) {
-            setAllOrdersDelivered(true);
-            return true;
-        } else return false;
+    public synchronized String checkNotDelivered() {
+        for (String s : clients) {
+            if (!ordersDelivered.get(s) && ordersReady.get(s)) {
+                return s;
+            }
+        }
+        return null;
     }
 
     public ArrayList<String> generateOrder() {
@@ -516,26 +524,65 @@ class Restaurant {
     }
 
     public synchronized void placeOrder(Client client) {
-        notify();
         this.getClients().add(client.getName());
         this.getOrders().put(client.getName(), this.generateOrder());
         this.getOrdersPlaced().put(client.getName(), false);
         this.getOrdersReady().put(client.getName(), false);
         this.getOrdersDelivered().put(client.getName(), false);
+        log(client.getName() + " enters the restaurant");
+        notifyAll();
     }
 
     @SneakyThrows
     public synchronized void awaitOrder(Client client) {
-        while (!this.getOrdersDelivered().get(client)) {
+        while (!this.getOrdersDelivered().get(client.getName())) {
             wait();
+        }
+        log(client.getName() + " leaves the restaurant");
+    }
+
+    @SneakyThrows
+    public synchronized void takeOrder() {
+        while (checkNotPlaced() == null) {
+            wait();
+        }
+        while (checkNotPlaced() != null) {
+            String nextClient = checkNotPlaced();
+            Thread.sleep(200);
+            this.getOrdersPlaced().put(nextClient, true);
+            log("Order taken from " + nextClient);
+            notifyAll();
         }
     }
 
     @SneakyThrows
-    public synchronized void takeOrder(Client client) {
-        notify();
-        Thread.sleep(200);
-        this.getOrdersPlaced().put(client.getName(), true);
+    public synchronized void deliverOrder() {
+        while (checkNotDelivered() == null) {
+            wait();
+        }
+        while (checkNotDelivered() != null) {
+            String nextClient = checkNotDelivered();
+            Thread.sleep(100);
+            this.getOrdersDelivered().put(nextClient, true);
+            log("Order delivered to " + nextClient);
+            notifyAll();
+        }
+    }
+
+    @SneakyThrows
+    public synchronized void readyOrder() {
+        while (checkNotReady() == null) {
+            wait();
+        }
+        while (checkNotReady() != null) {
+            String nextClient = checkNotReady();
+            for (int a = 0; a < getOrders().get(nextClient).size(); a++) {
+                Thread.sleep(1000);
+            }
+            log("Order from " + nextClient + " is ready");
+            this.getOrdersReady().put(nextClient, true);
+            notifyAll();
+        }
     }
 }
 
@@ -552,7 +599,7 @@ class Client extends Thread {
     public void run() {
         getRestaurant().placeOrder(this);
         getRestaurant().awaitOrder(this);
-        log("Client " + this.getName() + " served with " + getRestaurant().getOrders().get(this).toString());
+        log("Client " + this.getName() + " served with " + getRestaurant().getOrders().get(this.getName()).toString());
     }
 }
 
@@ -565,11 +612,12 @@ class Waitress extends Thread {
         this.start();
     }
 
+    @SneakyThrows
     @Override
     public void run() {
-        if (getRestaurant().checkPlaced()) {
-            getRestaurant().deliverOrder;
-        } else getRestaurant().takeOrder();
+        sleep(20);
+        getRestaurant().takeOrder();
+        getRestaurant().deliverOrder();
     }
 }
 
@@ -584,8 +632,6 @@ class Cook extends Thread {
 
     @Override
     public void run() {
-        if (!getRestaurant().checkPlaced()) {
-            getRestaurant().readyOrder;
-        }
+        getRestaurant().readyOrder();
     }
 }
