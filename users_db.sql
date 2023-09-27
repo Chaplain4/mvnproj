@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Sep 25, 2023 at 09:46 PM
+-- Generation Time: Sep 27, 2023 at 09:40 PM
 -- Server version: 5.6.41
 -- PHP Version: 5.5.38
 
@@ -33,6 +33,8 @@ CREATE TABLE `employees` (
   `name` varchar(128) DEFAULT NULL,
   `last_name` varchar(128) NOT NULL DEFAULT 'Stranger',
   `age` int(11) NOT NULL,
+  `office_id` int(11) NOT NULL,
+  `passport_id` int(11) NOT NULL,
   `updated_ts` timestamp NULL DEFAULT NULL,
   `created_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -41,10 +43,13 @@ CREATE TABLE `employees` (
 -- Dumping data for table `employees`
 --
 
-INSERT INTO `employees` (`id`, `name`, `last_name`, `age`, `updated_ts`, `created_ts`) VALUES
-(1, 'John', 'Stranger', 35, NULL, '2023-09-25 18:20:46'),
-(2, 'Bill', 'Stranger', 35, NULL, '2023-09-25 18:28:49'),
-(3, 'Mike', 'Stranger', 55, NULL, '2023-09-25 18:28:49');
+INSERT INTO `employees` (`id`, `name`, `last_name`, `age`, `office_id`, `passport_id`, `updated_ts`, `created_ts`) VALUES
+(1, 'Bill', 'Stranger', 35, 1, 1, NULL, '2023-09-25 18:28:44'),
+(2, 'Mike', 'Stranger', 55, 1, 2, NULL, '2023-09-25 18:28:44'),
+(3, 'John', 'Stranger', 35, 1, 3, NULL, '2023-09-27 16:55:28'),
+(4, NULL, 'Ivanov', 37, 4, 4, NULL, '2023-09-27 16:58:47'),
+(6, 'Liza', 'Ivanova', 45, 2, 5, NULL, '2023-09-27 18:28:38'),
+(7, 'Olga', 'Stranger', 18, 3, 6, NULL, '2023-09-27 18:32:16');
 
 -- --------------------------------------------------------
 
@@ -54,23 +59,50 @@ INSERT INTO `employees` (`id`, `name`, `last_name`, `age`, `updated_ts`, `create
 
 CREATE TABLE `offices` (
   `id` int(11) NOT NULL,
-  `country_code` varchar(3) NOT NULL DEFAULT 'BY',
-  `address` varchar(200) NOT NULL,
-  `postal_code` mediumint(6) NOT NULL,
-  `telephone_number` varchar(20) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `work_hours` varchar(12) DEFAULT '9.00-17.00'
+  `title` varchar(64) NOT NULL,
+  `address` varchar(256) NOT NULL,
+  `phone 1` varchar(128) NOT NULL,
+  `phone 2` varchar(128) NOT NULL,
+  `postal_code` int(11) NOT NULL,
+  `updated_ts` timestamp NULL DEFAULT NULL,
+  `created_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `offices`
 --
 
-INSERT INTO `offices` (`id`, `country_code`, `address`, `postal_code`, `telephone_number`, `email`, `work_hours`) VALUES
-(1, 'BY', 'Minsk, Lenina str, 5', 220111, '342-79-19', NULL, '9.00-17.00'),
-(2, 'BY', 'Минск, Lenina str, 8', 220111, NULL, NULL, '9.00-17.00'),
-(3, 'BY', 'Минск, Lenina str, 7', 220111, NULL, NULL, '9.00-17.00'),
-(4, 'BY', 'Минск, Lenina str, 9', 220111, NULL, NULL, '9.00-17.00');
+INSERT INTO `offices` (`id`, `title`, `address`, `phone 1`, `phone 2`, `postal_code`, `updated_ts`, `created_ts`) VALUES
+(1, 'MAIN', 'BLR, Minsk, K.Marksa 32', '+375172416974', '+375172416975', 220111, NULL, '2023-09-27 16:32:41'),
+(2, 'DEP#1', 'BLR, Minsk, K.Marksa 34', '+375172417974', '+375172417975', 220111, NULL, '2023-09-27 16:32:41'),
+(3, 'DEP#2', 'BLR, Minsk, K.Marksa 35', '+375179046974', '+375172404975', 220111, NULL, '2023-09-27 16:32:41'),
+(4, 'DEP#3', 'BLR, Minsk, K.Marksa 36', '+375172416974', '+375172416975', 220111, NULL, '2023-09-27 16:32:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `passport`
+--
+
+CREATE TABLE `passport` (
+  `id` int(11) NOT NULL,
+  `personal_id` varchar(9) NOT NULL,
+  `ind_id` varchar(20) NOT NULL,
+  `exp_ts` date NOT NULL,
+  `created_ts` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `passport`
+--
+
+INSERT INTO `passport` (`id`, `personal_id`, `ind_id`, `exp_ts`, `created_ts`) VALUES
+(1, 'MP9831021', 'A7897846OP23', '2024-01-20', '2014-01-20'),
+(2, 'MP9131021', 'A7897846OP13', '2024-09-20', '2014-09-20'),
+(3, 'MP9504021', 'A7897846OP93', '2024-03-20', '2014-03-20'),
+(4, 'MP9871451', 'A7897446OP23', '2024-02-20', '2014-02-20'),
+(5, 'MP9007421', 'A1792346OP23', '2023-10-27', '2019-10-27'),
+(6, 'MP9837499', 'A7899346OP23', '2024-10-27', '2020-10-27');
 
 --
 -- Indexes for dumped tables
@@ -80,12 +112,20 @@ INSERT INTO `offices` (`id`, `country_code`, `address`, `postal_code`, `telephon
 -- Indexes for table `employees`
 --
 ALTER TABLE `employees`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `passport_id` (`passport_id`),
+  ADD KEY `fk_office_id_offices_pk_id` (`office_id`);
 
 --
 -- Indexes for table `offices`
 --
 ALTER TABLE `offices`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `passport`
+--
+ALTER TABLE `passport`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -96,13 +136,30 @@ ALTER TABLE `offices`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `offices`
 --
 ALTER TABLE `offices`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `passport`
+--
+ALTER TABLE `passport`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `employees`
+--
+ALTER TABLE `employees`
+  ADD CONSTRAINT `fk_office_id_offices_pk_id` FOREIGN KEY (`office_id`) REFERENCES `offices` (`id`),
+  ADD CONSTRAINT `fk_passport_id_passport_pk_id` FOREIGN KEY (`passport_id`) REFERENCES `passport` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
